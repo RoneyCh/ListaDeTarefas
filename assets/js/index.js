@@ -7,16 +7,25 @@ btn.addEventListener('click', () => {
     criaTarefa(tarefa.value);
 })
 
-const criaLi = () => {
-    return document.createElement('li');
-}
-
 tarefa.addEventListener('keyup', (e) => {
     if(!tarefa.value) return;
     if(e.keyCode === 13) {
         criaTarefa(tarefa.value);
     }
 });
+
+const criaTarefa = (txtInput) => {
+    const li = criaLi();
+    li.innerHTML = txtInput;
+    list.appendChild(li);
+    limpaInput();
+    apagarTarefa(li);
+    salvarTarefa();
+}
+
+const criaLi = () => {
+    return document.createElement('li');
+}
 
 const limpaInput = () => {
     tarefa.value = '';
@@ -34,12 +43,21 @@ const apagarTarefa = (li) => {
 document.addEventListener('click', (e) => {
     const el = e.target;
     el.classList.contains('apagar') ? el.parentElement.remove() : null;
-})
+    salvarTarefa();
+});
 
-const criaTarefa = (txtInput) => {
-    const li = criaLi();
-    li.innerHTML = txtInput;
-    list.appendChild(li);
-    limpaInput();
-    apagarTarefa(li);
+const salvarTarefa = () => {
+    const liTarefas = list.querySelectorAll('li');
+    const listaDeTarefas = [];
+    
+    for(let tarefa of liTarefas) {
+        let tarefaTexto = tarefa.innerText;
+        tarefaTexto = tarefaTexto.replace('X', '').trim();
+        listaDeTarefas.push(tarefaTexto);
+        
+    }
+
+    const tarefaJSON = JSON.stringify(listaDeTarefas);
+    localStorage.setItem('tarefas', tarefaJSON);
+    console.log(tarefaJSON);
 }
